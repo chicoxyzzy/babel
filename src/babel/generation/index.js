@@ -17,9 +17,7 @@ import * as t from "../types";
  */
 
 class CodeGenerator {
-  constructor(ast, opts, code) {
-    opts = opts || {};
-
+  constructor(ast, opts = {}: Object, code) {
     this.comments = ast.comments || [];
     this.tokens   = ast.tokens || [];
     this.format   = CodeGenerator.normalizeOptions(code, opts, this.tokens);
@@ -39,14 +37,14 @@ class CodeGenerator {
    * - If `opts.compact = "auto"` and the code is over 100KB, `compact` will be set to `true`.
    */
 
-  static normalizeOptions(code, opts, tokens) {
-    var style = "  ";
+  static normalizeOptions(code, opts: Object, tokens) {
+    let style = "  ";
     if (code) {
-      var indent = detectIndent(code).indent;
+      let indent = detectIndent(code).indent;
       if (indent && indent !== " ") style = indent;
     }
 
-    var format = {
+    let format = {
       retainLines: opts.retainLines,
       comments: opts.comments == null || opts.comments,
       compact: opts.compact,
@@ -73,18 +71,18 @@ class CodeGenerator {
    * Determine if input code uses more single or double quotes.
    */
   static findCommonStringDelimiter(code, tokens) {
-    var occurences = {
+    let occurences = {
       single: 0,
       double: 0
     };
 
-    var checked = 0;
+    let checked = 0;
 
-    for (var i = 0; i < tokens.length; i++) {
-      var token = tokens[i];
+    for (let i = 0; i < tokens.length; i++) {
+      let token = tokens[i];
       if (token.type.label !== "string") continue;
 
-      var raw = code.slice(token.start, token.end);
+      let raw = code.slice(token.start, token.end);
       if (raw[0] === "'") {
         occurences.single++;
       } else {
@@ -126,13 +124,13 @@ class CodeGenerator {
    */
 
   generate() {
-    var ast = this.ast;
+    let ast = this.ast;
 
     this.print(ast);
 
     if (ast.comments) {
-      var comments = [];
-      for (var comment of (ast.comments: Array)) {
+      let comments = [];
+      for (let comment of (ast.comments: Array)) {
         if (!comment._displayed) comments.push(comment);
       }
       this._printComments(comments);
@@ -159,7 +157,7 @@ class CodeGenerator {
   catchUp(node, parent, leftParenPrinted) {
     // catch up to this nodes newline if we're behind
     if (node.loc && this.format.retainLines && this.buffer.buf) {
-      var needsParens = false;
+      let needsParens = false;
       if (!leftParenPrinted && parent && this.position.line < node.loc.start.line && t.isTerminatorless(parent)) {
         needsParens = true;
         this._push("(");
@@ -181,7 +179,7 @@ class CodeGenerator {
       return;
     }
 
-    var lines = 0;
+    let lines = 0;
 
     if (node.start != null && !node._ignoreUserWhitespace) {
       // user node
@@ -195,7 +193,7 @@ class CodeGenerator {
       if (!leading) lines++; // always include at least a single line after
       if (opts.addNewlines) lines += opts.addNewlines(leading, node) || 0;
 
-      var needs = n.needsWhitespaceAfter;
+      let needs = n.needsWhitespaceAfter;
       if (leading) needs = n.needsWhitespaceBefore;
       if (needs(node, parent)) lines++;
 
@@ -217,21 +215,21 @@ class CodeGenerator {
       node._compact = true;
     }
 
-    var oldConcise = this.format.concise;
+    let oldConcise = this.format.concise;
     if (node._compact) {
       this.format.concise = true;
     }
 
     if (this[node.type]) {
-      var needsNoLineTermParens = n.needsParensNoLineTerminator(node, parent);
-      var needsParens           = needsNoLineTermParens || n.needsParens(node, parent);
+      let needsNoLineTermParens = n.needsParensNoLineTerminator(node, parent);
+      let needsParens           = needsNoLineTermParens || n.needsParens(node, parent);
 
       if (needsParens) this.push("(");
       if (needsNoLineTermParens) this.indent();
 
       this.printLeadingComments(node, parent);
 
-      var needsParensFromCatchup = this.catchUp(node, parent, needsParens);
+      let needsParensFromCatchup = this.catchUp(node, parent, needsParens);
 
       this._printNewline(true, node, parent, opts);
 
@@ -263,14 +261,14 @@ class CodeGenerator {
    * [Please add a description.]
    */
 
-  printJoin(print, nodes, opts = {}) {
+  printJoin(print, nodes: Array, opts = {}) {
     if (!nodes || !nodes.length) return;
 
-    var len = nodes.length;
+    let len = nodes.length;
 
     if (opts.indent) this.indent();
 
-    var printOpts = {
+    let printOpts = {
       statement: opts.statement,
       addNewlines: opts.addNewlines,
       after: () => {
@@ -284,8 +282,8 @@ class CodeGenerator {
       }
     };
 
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
+    for (let i = 0; i < nodes.length; i++) {
+      let node = nodes[i];
       print.plain(node, printOpts);
     }
 
@@ -297,7 +295,7 @@ class CodeGenerator {
    */
 
   printAndIndentOnComments(print, node) {
-    var indent = !!node.leadingComments;
+    let indent = !!node.leadingComments;
     if (indent) this.indent();
     print.plain(node);
     if (indent) this.dedent();
@@ -321,7 +319,7 @@ class CodeGenerator {
    */
 
   generateComment(comment) {
-    var val = comment.value;
+    let val = comment.value;
     if (comment.type === "CommentLine") {
       val = `//${val}`;
     } else {
@@ -355,8 +353,8 @@ class CodeGenerator {
       return [];
     }
 
-    var comments = [];
-    var nodes    = [node];
+    let comments = [];
+    let nodes    = [node];
 
     if (t.isExpressionStatement(node)) {
       nodes.push(node.argument);
@@ -373,7 +371,7 @@ class CodeGenerator {
    * [Please add a description.]
    */
 
-  _getComments(key, node) {
+  _getComments(key, node?) {
     return (node && node[key]) || [];
   }
 
@@ -386,12 +384,12 @@ class CodeGenerator {
     if (!this.format.comments) return;
     if (!comments || !comments.length) return;
 
-    for (var comment of (comments: Array)) {
-      var skip = false;
+    for (let comment of (comments: Array)) {
+      let skip = false;
 
       if (this.ast.comments) {
         // find the original comment in the ast and set it as displayed
-        for (var origComment of (this.ast.comments: Array)) {
+        for (let origComment of (this.ast.comments: Array)) {
           if (origComment.start === comment.start) {
             // comment has already been output
             if (origComment._displayed) skip = true;
@@ -409,8 +407,8 @@ class CodeGenerator {
       // whitespace before
       this.newline(this.whitespace.getNewlinesBefore(comment));
 
-      var column = this.position.column;
-      var val    = this.generateComment(comment);
+      let column = this.position.column;
+      let val    = this.generateComment(comment);
 
       if (column && !this.isLast(["\n", " ", "[", "{"])) {
         this._push(" ");
@@ -419,13 +417,13 @@ class CodeGenerator {
 
       //
       if (comment.type === "CommentBlock" && this.format.indent.adjustMultilineComment) {
-        var offset = comment.loc && comment.loc.start.column;
+        let offset = comment.loc && comment.loc.start.column;
         if (offset) {
-          var newlineRegex = new RegExp("\\n\\s{1," + offset + "}", "g");
+          let newlineRegex = new RegExp("\\n\\s{1," + offset + "}", "g");
           val = val.replace(newlineRegex, "\n");
         }
 
-        var indent = Math.max(this.indentSize(), column);
+        let indent = Math.max(this.indentSize(), column);
         val = val.replace(/\n/g, `\n${repeating(" ", indent)}`);
       }
 
@@ -471,7 +469,7 @@ each(CodeGenerator.generators, function (generator) {
  */
 
 module.exports = function (ast, opts, code) {
-  var gen = new CodeGenerator(ast, opts, code);
+  let gen = new CodeGenerator(ast, opts, code);
   return gen.generate();
 };
 

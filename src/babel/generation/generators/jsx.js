@@ -65,12 +65,12 @@ export function JSXExpressionContainer(node, print) {
  */
 
 export function JSXElement(node, print) {
-  var open = node.openingElement;
+  let open = node.openingElement;
   print.plain(open);
   if (open.selfClosing) return;
 
   this.indent();
-  for (var child of (node.children: Array)) {
+  for (let child of (node.children: Array)) {
     if (t.isLiteral(child)) {
       this.push(child.value, true);
     } else {

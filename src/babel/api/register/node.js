@@ -15,7 +15,7 @@ import path from "path";
 sourceMapSupport.install({
   handleUncaughtExceptions: false,
   retrieveSourceMap(source) {
-    var map = maps && maps[source];
+    let map = maps && maps[source];
     if (map) {
       return {
         url: null,
@@ -32,56 +32,56 @@ sourceMapSupport.install({
  */
 
 registerCache.load();
-var cache = registerCache.get();
+let cache = registerCache.get();
 
 /**
  * Store options.
  */
 
-var transformOpts = {};
+let transformOpts = {};
 
-var ignore;
-var only;
+let ignore;
+let only;
 
-var oldHandlers   = {};
-var maps          = {};
+let oldHandlers   = {};
+let maps          = {};
 
-var cwd = process.cwd();
+let cwd = process.cwd();
 
 /**
  * Get path from `filename` relative to the current working directory.
  */
 
-var getRelativePath = function (filename){
+function getRelativePath(filename: string): string {
   return path.relative(cwd, filename);
-};
+}
 
 /**
  * Get last modified time for a `filename`.
  */
 
-var mtime = function (filename) {
+function mtime(filename: string) {
   return +fs.statSync(filename).mtime;
-};
+}
 
 /**
  * Compile a `filename` with optional `opts`.
  */
 
-var compile = function (filename, opts = {}) {
-  var result;
+function compile(filename, opts = {}) {
+  let result;
 
-  var optsManager = new OptionManager;
+  let optsManager = new OptionManager;
   optsManager.mergeOptions(transformOpts);
   opts = optsManager.init(opts);
 
-  var cacheKey = `${filename}:${JSON.stringify(opts)}:${babel.version}`;
+  let cacheKey = `${filename}:${JSON.stringify(opts)}:${babel.version}`;
 
-  var env = process.env.BABEL_ENV || process.env.NODE_ENV;
+  let env = process.env.BABEL_ENV || process.env.NODE_ENV;
   if (env) cacheKey += `:${env}`;
 
   if (cache) {
-    var cached = cache[cacheKey];
+    let cached = cache[cacheKey];
     if (cached && cached.mtime === mtime(filename)) {
       result = cached;
     }
@@ -102,7 +102,7 @@ var compile = function (filename, opts = {}) {
   maps[filename] = result.map;
 
   return result.code;
-};
+}
 
 /**
  * Test if a `filename` should be ignored by Babel.

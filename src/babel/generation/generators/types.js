@@ -32,7 +32,7 @@ export { RestElement as SpreadElement, RestElement as SpreadProperty };
  */
 
 export function ObjectExpression(node, print) {
-  var props = node.properties;
+  let props = node.properties;
 
   if (props.length) {
     this.push("{");
@@ -96,13 +96,13 @@ export function Property(node, print) {
  */
 
 export function ArrayExpression(node, print) {
-  var elems = node.elements;
-  var len   = elems.length;
+  let elems = node.elements;
+  let len   = elems.length;
 
   this.push("[");
 
-  for (var i = 0; i < elems.length; i++) {
-    var elem = elems[i];
+  for (let i = 0; i < elems.length; i++) {
+    let elem = elems[i];
     if (!elem) {
       // If the array expression ends with a hole, that hole
       // will be ignored by the interpreter, but if it ends with
@@ -137,15 +137,15 @@ const SCIENTIFIC_NOTATION = /e/i;
  */
 
 export function Literal(node, print, parent) {
-  var val  = node.value;
-  var type = typeof val;
+  let val  = node.value;
+  let type = typeof val;
 
   if (type === "string") {
     this._stringLiteral(val);
   } else if (type === "number") {
     // check to see if this is the same number as the raw one in the original source as asm.js uses
     // numbers in the form 5.0 for type hinting
-    var raw = node.raw;
+    let raw = node.raw;
     if (val === +raw && raw[raw.length - 1] !== "." && !/^0[bo]/i.test(raw)) {
       val = raw;
     }

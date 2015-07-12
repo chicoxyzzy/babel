@@ -8,7 +8,7 @@ import chalk from "chalk";
  * Chalk styles for token types.
  */
 
-var defs = {
+let defs = {
   string:     chalk.red,
   punctuator: chalk.bold,
   curly:      chalk.green,
@@ -32,7 +32,7 @@ const NEWLINE = /\r\n|[\n\r\u2028\u2029]/;
  */
 
 function getTokenType(match) {
-  var token = jsTokens.matchToToken(match);
+  let token = jsTokens.matchToToken(match);
   if (token.type === "name" && esutils.keyword.isReservedWordES6(token.value)) {
     return "keyword";
   }
@@ -60,8 +60,8 @@ function getTokenType(match) {
 
 function highlight(text) {
   return text.replace(jsTokens, function (...args) {
-    var type = getTokenType(args);
-    var colorize = defs[type];
+    let type = getTokenType(args);
+    let colorize = defs[type];
     if (colorize) {
       return args[0].split(NEWLINE).map(str => colorize(str)).join("\n");
     } else {
@@ -83,8 +83,8 @@ export default function (lines: number, lineNumber: number, colNumber: number, o
 
   lines = lines.split(NEWLINE);
 
-  var start = Math.max(lineNumber - 3, 0);
-  var end   = Math.min(lines.length, lineNumber + 3);
+  let start = Math.max(lineNumber - 3, 0);
+  let end   = Math.min(lines.length, lineNumber + 3);
 
   if (!lineNumber && !colNumber) {
     start = 0;

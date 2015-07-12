@@ -62,12 +62,7 @@ export function ObjectExpression(node, parent) {
     return true;
   }
 
-  if (t.isMemberExpression(parent) && parent.object === node) {
-    // ({ foo: "bar" }).foo
-    return true;
-  }
-
-  return false;
+  return t.isMemberExpression(parent) && parent.object === node;
 }
 
 /**
@@ -88,11 +83,11 @@ export function Binary(node, parent) {
   }
 
   if (t.isBinary(parent)) {
-    var parentOp  = parent.operator;
-    var parentPos = PRECEDENCE[parentOp];
+    let parentOp  = parent.operator;
+    let parentPos = PRECEDENCE[parentOp];
 
-    var nodeOp = node.operator;
-    var nodePos = PRECEDENCE[nodeOp];
+    let nodeOp = node.operator;
+    let nodePos = PRECEDENCE[nodeOp];
 
     if (parentPos > nodePos) {
       return true;

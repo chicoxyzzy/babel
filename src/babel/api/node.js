@@ -24,7 +24,7 @@ export { t as types };
  */
 
 export function register(opts?: Object) {
-  var callback = require("./register/node-polyfill");
+  let callback = require("./register/node-polyfill");
   if (opts != null) callback(opts);
   return callback;
 }
@@ -52,7 +52,7 @@ export function transformFile(filename: string, opts?: Object, callback: Functio
   fs.readFile(filename, function (err, code) {
     if (err) return callback(err);
 
-    var result;
+    let result;
 
     try {
       result = transform(code, opts);
@@ -77,7 +77,7 @@ export function transformFileSync(filename: string, opts?: Object = {}) {
  * Parse script with Babel's parser.
  */
 
-export function parse(code, opts = {}) {
+export function parse(code, opts?: Object = {}) {
   opts.allowHashBang = true;
   opts.sourceType = "module";
   opts.ecmaVersion = Infinity;
@@ -87,7 +87,7 @@ export function parse(code, opts = {}) {
   };
   opts.features = {};
 
-  for (var key in transform.pipeline.transformers) {
+  for (let key in transform.pipeline.transformers) {
     opts.features[key] = true;
   }
 

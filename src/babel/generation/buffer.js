@@ -174,12 +174,12 @@ export default class Buffer {
    */
 
   _removeSpacesAfterLastNewline() {
-    var lastNewlineIndex = this.buf.lastIndexOf("\n");
+    let lastNewlineIndex = this.buf.lastIndexOf("\n");
     if (lastNewlineIndex === -1) {
       return;
     }
 
-    var index = this.buf.length - 1;
+    let index = this.buf.length - 1;
     while (index > lastNewlineIndex) {
       if (this.buf[index] !== " ") {
         break;
@@ -200,7 +200,7 @@ export default class Buffer {
   push(str, noIndent) {
     if (!this.format.compact && this._indent && !noIndent && str !== "\n") {
       // we have an indent level and we aren't pushing a newline
-      var indent = this.getIndent();
+      let indent = this.getIndent();
 
       // replace all newlines with newlines with the indentation
       str = str.replace(/\n/g, `\n${indent}`);
@@ -240,8 +240,8 @@ export default class Buffer {
   isLast(cha) {
     if (this.format.compact) return false;
 
-    var buf = this.buf;
-    var last = buf[buf.length - 1];
+    let buf = this.buf;
+    let last = buf[buf.length - 1];
 
     if (Array.isArray(cha)) {
       return includes(cha, last);

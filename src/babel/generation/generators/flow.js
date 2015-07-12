@@ -268,7 +268,7 @@ export { TypeParameterInstantiation as TypeParameterDeclaration };
 
 export function ObjectTypeAnnotation(node, print) {
   this.push("{");
-  var props = node.properties.concat(node.callProperties, node.indexers);
+  let props = node.properties.concat(node.callProperties, node.indexers);
 
   if (props.length) {
     this.space();
